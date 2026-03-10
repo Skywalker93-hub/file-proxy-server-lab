@@ -1,0 +1,13 @@
+---
+- name: Proxy (Samba + Nginx)
+  hosts: proxy
+  become: true
+  roles:
+    - samba_server
+    - nginx_lb
+
+- name: Web nodes (autofs + python)
+  hosts: web
+  become: true
+  roles:
+    - web_node
