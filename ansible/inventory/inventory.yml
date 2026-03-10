@@ -1,0 +1,16 @@
+all:
+  children:
+    cloudshell:
+      hosts:
+        s15058038-01:
+          ansible_host: 10.10.0.106
+          ansible_user: s15058038
+          ansible_port: 22
+        s15058038-02:
+          ansible_host: 10.11.1.74
+          ansible_user: s15058038
+          ansible_port: 22
+        s15058038-03:
+          ansible_host: 10.12.0.245
+          ansible_user: s15058038
+          ansible_port: 22
