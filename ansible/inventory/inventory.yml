@@ -2,15 +2,15 @@ all:
   children:
     cloudshell:
       hosts:
-        s15058038-01:
+        Proxy-samba (Samba-server + Nginx):
           ansible_host: 10.10.0.106
           ansible_user: s15058038
           ansible_port: 22
-        s15058038-02:
+        Web1 (Samba-client + Python):
           ansible_host: 10.11.1.74
           ansible_user: s15058038
           ansible_port: 22
-        s15058038-03:
+        Web2 (Samba-client + Python):
           ansible_host: 10.12.0.245
           ansible_user: s15058038
           ansible_port: 22
