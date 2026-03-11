@@ -1,7 +1,0 @@
----
-- name: Web nodes (autofs + python)
-  hosts: smbclient
-  become: true
-  roles:
-    - samba-client
-    

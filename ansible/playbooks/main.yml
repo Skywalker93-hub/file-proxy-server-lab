@@ -1,0 +1,12 @@
+---
+- name: Proxy (Samba + Nginx)
+  hosts: smbserver
+  become: true
+  roles:
+    - samba-server
+
+- name: Web nodes (autofs + python)
+  hosts: smbclient
+  become: true
+  roles:
+    - samba-client

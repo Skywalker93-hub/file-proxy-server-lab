@@ -1,6 +1,0 @@
----
-- name: Proxy (Samba + Nginx)
-  hosts: proxy
-  become: true
-  roles:
-    - samba-server
