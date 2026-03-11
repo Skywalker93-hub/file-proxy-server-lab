@@ -2,7 +2,7 @@ all:
   children:
     smbserver:
       hosts:
-        proxy:
+        s15058038-01:
           ansible_host: 10.10.0.106
           ansible_user: s15058038
           ansible_port: 22
