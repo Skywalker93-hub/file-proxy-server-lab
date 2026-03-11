@@ -1,0 +1,56 @@
+- name: Update all packages to their latest version
+  ansible.builtin.apt:
+    name: "*"
+    state: latest
+    update_cache: yes
+
+- name: Upgrade all packages
+  ansible.builtin.apt:
+    upgrade: dist
+    
+- name: Install cifs-utils (state=present is optional)
+  ansible.builtin.apt:
+    name: cifs-utils
+    state: present
+
+- name: Install autofs (state=present is optional)
+  ansible.builtin.apt:
+    name: autofs
+    state: present
+
+- name: Touch a file, using symbolic modes to set the permissions (equivalent to 0644)
+  ansible.builtin.file:
+    path: /etc/auto.master.d/cifs.autofs
+    state: touch
+    mode: u=rwx,g=r,o=r
+
+- name: Create a directory if it does not exist
+  ansible.builtin.file:
+    path: /mnt/smb
+    state: directory
+    owner: root
+    group: root 
+
+- name: Ensure security mode is user
+  ansible.builtin.lineinfile:
+    path: /etc/auto.master.d/cifs.autofs
+    line: '/mnt/smb /etc/auto.cifs --timeout=60 --browse'
+
+- name: Touch a file, using symbolic modes to set the permissions (equivalent to 0600)
+  ansible.builtin.file:
+    path: /etc/auto.cifs
+    state: touch
+    mode: u=rw,g-rwx,o-rwx
+
+- name: Add samba share configuration
+  ansible.builtin.lineinfile:
+    path: /etc/auto.cifs
+    line: "smbuser -fstype=cifs,username={{ smb_username }},password={{ smb_password }} ://10.10.0.106/smbuser"
+    create: yes
+
+- name: Restart autofs service
+  ansible.builtin.service:
+    name: autofs
+    state: restarted
+    daemon_reload: yes
+    enabled: yes

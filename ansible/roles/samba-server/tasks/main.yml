@@ -58,9 +58,19 @@
     insertafter: '^\[global\]'
     line: 'security = user'
 
-- name: Ensure service smbd is started and enabled
+- name: Touch a file, using symbolic modes to set the permissions (equivalent to 0644)
+  ansible.builtin.file:
+    path: /home/{{ smb_username }}/alesha.txt
+    state: touch
+    mode: u=rwx,g=r,o-rwx
+
+- name: Add samba share configuration
+  ansible.builtin.blockinfile:
+    path: /home/{{ smb_username }}/alesha.txt
+    block: "потому что есть Алеша у тебя, Алеша ты вздыхаешь зря"
+
+- name: Restart smbd service
   ansible.builtin.service:
-    name: smbd.service
-    state: started
+    name: smbd
+    state: restarted
     enabled: yes
-    daemon_reload: yes
