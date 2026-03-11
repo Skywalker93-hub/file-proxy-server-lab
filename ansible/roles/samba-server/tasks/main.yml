@@ -1,0 +1,66 @@
+---
+- name: Create a user '{{ smb_username }}' with a home directory
+  ansible.builtin.user:
+    name: "{{ smb_username }}"
+    create_home: yes
+
+- name: Change directory permissions
+  ansible.builtin.file:
+    path: "/home/{{ smb_username }}"
+    state: directory
+    owner: "{{ smb_username }}"
+    group: "{{ smb_username }}"
+    mode: '0740'
+
+- name: Update all packages to their latest version
+  ansible.builtin.apt:
+    name: "*"
+    state: latest
+    update_cache: yes
+
+- name: Upgrade all packages
+  ansible.builtin.apt:
+    upgrade: dist
+    
+- name: Install samba (state=present is optional)
+  ansible.builtin.apt:
+    name: samba
+    state: present
+
+- name: Set Samba password for {{ smb_username }}
+  ansible.builtin.command: "smbpasswd -a -s {{ smb_username }}"
+  args:
+    stdin: "{{ smb_password }}\n{{ smb_password }}"
+  no_log: true
+
+- name: Backup file with owner and permissions
+  ansible.builtin.copy:
+    src: /etc/samba/smb.conf
+    dest: /etc/samba/smb.conf.backup  
+    remote_src: true
+    owner: root
+    group: root
+    mode: '0644'
+    
+- name: Add samba share configuration
+  ansible.builtin.blockinfile:
+    path: /etc/samba/smb.conf
+    block: |
+      [{{ smb_username }}]
+        path = /home/{{ smb_username }}
+        valid users = {{ smb_username }}
+        guest ok = no
+        read only = yes
+
+- name: Ensure security mode is user
+  ansible.builtin.lineinfile:
+    path: /etc/samba/smb.conf
+    insertafter: '^\[global\]'
+    line: 'security = user'
+
+- name: Ensure service smbd is started and enabled
+  ansible.builtin.service:
+    name: smbd.service
+    state: started
+    enabled: yes
+    daemon_reload: yes

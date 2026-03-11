@@ -3,11 +3,11 @@
   hosts: proxy
   become: true
   roles:
-    - samba_server
-    - nginx_lb
+    - samba-server
 
 - name: Web nodes (autofs + python)
   hosts: web
   become: true
   roles:
-    - web_node
+    - samba-client
+    
