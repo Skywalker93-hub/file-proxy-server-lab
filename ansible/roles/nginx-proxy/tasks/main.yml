@@ -1,0 +1,32 @@
+- name: Install nginx (state=present is optional)
+  ansible.builtin.apt:
+    name: nginx
+    state: present
+
+- name: Touch a file, using symbolic modes to set the permissions (equivalent to 0600)
+  ansible.builtin.file:
+    path: /etc/nginx/sites-available/proxy.conf
+    state: touch
+    mode: u=rw 
+   
+- name: Copy a new "proxy.conf" file into place, after passing validation with visudo
+  ansible.builtin.copy:
+    src: files/proxy.conf
+    dest: /etc/nginx/sites-available/proxy.conf
+
+- name: Remove file (delete file)
+  ansible.builtin.file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+
+- name: Run command nginx -t to test the configuration
+  ansible.builtin.command: /usr/sbin/nginx -t 
+
+- name: Create a symbolic link to enable the site
+  ansible.builtin.file:
+    src: /etc/nginx/sites-available/proxy.conf
+    dest: /etc/nginx/sites-enabled/proxy.conf
+    state: link
+  
+- name: Run command nginx -s reload to apply the new configuration
+  ansible.builtin.command: /usr/sbin/nginx -s reload

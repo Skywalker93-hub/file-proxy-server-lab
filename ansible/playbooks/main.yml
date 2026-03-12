@@ -3,10 +3,12 @@
   hosts: smbserver
   become: true
   roles:
-    - samba-server
+   - samba-server
+   - nginx-proxy
 
 - name: Web nodes (autofs + python)
   hosts: smbclient
   become: true
   roles:
     - samba-client
+    - python-server

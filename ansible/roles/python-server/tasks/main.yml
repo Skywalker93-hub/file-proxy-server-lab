@@ -1,0 +1,28 @@
+- name: Install python3 (state=present is optional)
+  ansible.builtin.apt:
+    name: python3
+    state: present
+
+- name: Touch a file, using symbolic modes to set the permissions (equivalent to 0644)
+  ansible.builtin.file:
+    path: /etc/systemd/system/python-webshare.service
+    state: touch
+    mode: u=rwx,g=r,o=r
+
+- name: Copy a new "python-webshare.service" file into place, after passing validation with visudo
+  ansible.builtin.copy:
+    src: files/python-webshare.service
+    dest: /etc/systemd/system/python-webshare.service
+    owner: root
+    group: root
+    mode: u=rwx,g=r,o=r 
+  
+- name: Reload systemd to recognize the new service file
+  ansible.builtin.systemd:
+    daemon_reload: yes  
+
+- name: Enable and start python-webshare service
+  ansible.builtin.systemd:
+    name: python-webshare
+    state: started
+    enabled: yes
